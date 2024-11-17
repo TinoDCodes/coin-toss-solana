@@ -1,5 +1,9 @@
-import DashboardFeature from '@/components/dashboard/dashboard-feature'
+import CountDown from "@/components/CountDown";
 
 export default function Page() {
-  return <DashboardFeature />
+  return (
+    <div className="wrapper h-full flex flex-col items-center justify-center">
+      <CountDown />
+    </div>
+  );
 }

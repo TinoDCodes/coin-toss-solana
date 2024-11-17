@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-background">
       <Header />
 
       <main className="flex-grow">{children}</main>
