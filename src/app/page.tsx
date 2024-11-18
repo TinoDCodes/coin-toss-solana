@@ -1,8 +1,11 @@
+import BetSectionUI from "@/components/bet/BetSectionUI";
 import CountDown from "@/components/CountDown";
 
 export default function Page() {
   return (
-    <div className="wrapper h-full flex flex-col items-center justify-center">
+    <div className="wrapper h-full flex flex-col items-center justify-center space-y-20">
+      <BetSectionUI />
+
       <CountDown />
     </div>
   );
