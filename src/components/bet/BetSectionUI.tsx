@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import { useEventData } from "./event-data-access";
 
 const faces: CoinFace[] = [
   {
@@ -24,18 +25,28 @@ const faces: CoinFace[] = [
 ];
 
 const BetSectionUI = () => {
+  const { selections, headsMarket, tailsMarket } = useEventData();
+
   const [selectedFace, setSelectedFace] = useState<CoinFace>(faces[0]);
   const [betAmount, setBetAmount] = useState<string>("1");
-  const [potentialEarnings, setPotentialEarnings] = useState(0);
-
-  // Simulated odds (2x payout for this example)
-  const odds = 2;
+  const [odds, setOdds] = useState<number>(2);
+  const [potentialEarnings, setPotentialEarnings] = useState<number>(0);
 
   useEffect(() => {
     // Calculate potential earnings whenever bet amount changes
-    const amount = parseInt(betAmount) || 0;
+    const amount = parseFloat(betAmount) || 0;
     setPotentialEarnings(amount * odds);
   }, [betAmount]);
+
+  useEffect(() => {
+    if (headsMarket && tailsMarket) {
+      if (selectedFace.value === "heads") {
+        setOdds(1 / headsMarket.price);
+      } else if (selectedFace.value === "tails") {
+        setOdds(1 / tailsMarket.price);
+      }
+    }
+  }, [selectedFace]);
 
   const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -48,6 +59,13 @@ const BetSectionUI = () => {
       }
     }
   };
+
+  const handlePlaceBet = () => {
+    console.log("selections", selections);
+    console.log("heads market", headsMarket);
+    console.log("tails market", tailsMarket);
+  };
+
   return (
     <div className="justify-self-center flex flex-col items-center space-y-8">
       <h1 className="font-bold text-center text-xl text-white">Pick A Side</h1>
@@ -122,6 +140,7 @@ const BetSectionUI = () => {
         variant="secondary"
         size="lg"
         className="w-full bg-[#f59e0b] text-white hover:opacity-90 hover:bg-[#f59e0b] transition"
+        onClick={handlePlaceBet}
       >
         PLACE BET
       </Button>

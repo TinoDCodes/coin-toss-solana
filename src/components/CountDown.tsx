@@ -3,25 +3,29 @@
 import { getTimeLeft } from "@/utils/helpers";
 import { CountDownTime } from "@/utils/types";
 import { useEffect, useState } from "react";
-
-const targetTime = new Date();
-targetTime.setMinutes(targetTime.getMinutes() + 59);
+import { useEventData } from "./bet/event-data-access";
 
 const CountDown = () => {
+  const { eventData, eventError, isEventFetching } = useEventData();
+
   const [timeLeft, setTimeLeft] = useState<CountDownTime>({
     minutes: "00",
     seconds: "00",
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const remainingTime = getTimeLeft(targetTime);
+    if (eventData) {
+      const targetTime = new Date(eventData.date_time);
 
-      setTimeLeft(remainingTime);
-    }, 1000);
+      const interval = setInterval(() => {
+        const remainingTime = getTimeLeft(targetTime);
 
-    return () => clearInterval(interval);
-  }, []);
+        setTimeLeft(remainingTime);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [eventData]);
 
   return (
     <div>
