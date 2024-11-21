@@ -1,8 +1,8 @@
 "use client";
 
+import { MintTossCoin } from "@/components/MintTossCoin";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
-import { BetEvent } from "@/utils/types";
 
 export default function HelpersPage() {
   const supabase = createClient();
@@ -50,6 +50,8 @@ export default function HelpersPage() {
       >
         Test Db Insert
       </Button>
+
+      <MintTossCoin />
     </div>
   );
 }

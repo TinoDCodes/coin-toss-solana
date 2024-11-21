@@ -31,3 +31,5 @@ export const getTimeLeft = (target: Date): CountDownTime => {
     seconds: formatTime(seconds),
   };
 };
+
+export const TOKEN_DECIMALS = 9;
