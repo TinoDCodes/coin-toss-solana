@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { WalletButton } from "./solana/solana-provider";
 import { ClusterUiSelect } from "./cluster/cluster-ui";
+import { CoinBalance } from "./CoinBalance";
 
 const Header = () => {
   return (
@@ -11,7 +12,8 @@ const Header = () => {
         </h1>
       </Link>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-4">
+        <CoinBalance />
         <WalletButton />
         {/* <ClusterUiSelect /> */}
       </div>
