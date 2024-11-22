@@ -1,10 +1,12 @@
 "use client";
 
 import { MintTossCoin } from "@/components/MintTossCoin";
+import { useTossCoinAccount } from "@/components/toss-coin-data-access";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 
 export default function HelpersPage() {
+  const { coinAccount } = useTossCoinAccount();
   const supabase = createClient();
 
   const testDbInsert = async () => {
@@ -42,6 +44,16 @@ export default function HelpersPage() {
 
   return (
     <div className="wrapper h-full flex flex-col items-center justify-center gap-5">
+      <button
+        onClick={() => {
+          if (coinAccount) {
+            console.log(coinAccount.account.data.parsed.info.tokenAmount);
+          }
+        }}
+      >
+        check balance
+      </button>
+
       <Button
         variant="default"
         size="lg"
