@@ -34,7 +34,7 @@ export function useEventData() {
   const {
     data: selections,
     error: selectionsError,
-    isPending: selectionsPending,
+    isPending: isSelectionsPending,
   } = useQuery({
     queryKey: ["selections"],
     queryFn: async () => {
@@ -112,7 +112,7 @@ export function useEventData() {
     isEventFetching,
     selections,
     selectionsError,
-    selectionsPending,
+    isSelectionsPending,
     headsMarket,
     headsMarketError,
     isHeadsMarketPending,

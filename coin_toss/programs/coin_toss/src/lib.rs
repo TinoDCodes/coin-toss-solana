@@ -1,7 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{
-    token::{Mint, Token, TokenAccount, Transfer},
-};
+use anchor_spl::token::{transfer, Mint, Token, TokenAccount, Transfer};
 
 declare_id!("AotF3uCcqR7LymaLUproQ3PwmqFqoK7zwg1t7FfU4rb8");
 
@@ -14,7 +12,7 @@ pub mod coin_toss {
     }
 
     pub fn transfer_in(ctx: Context<TransferAccounts>, amount: u64) -> Result<()> {
-        msg!("Transfering in Toss Coin. Amount: {}!", amount);
+        msg!("Depositing {} into coin vault!", amount);
 
         let cpi_ctx = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -24,8 +22,7 @@ pub mod coin_toss {
                 authority: ctx.accounts.signer.to_account_info(),
             },
         );
-
-        anchor_spl::token::transfer(cpi_ctx, amount)?;
+        transfer(cpi_ctx, amount)?;
 
         Ok(())
     }
@@ -46,8 +43,7 @@ pub mod coin_toss {
             },
             signer
         );
-
-        anchor_spl::token::transfer(cpi_ctx, amount);
+        transfer(cpi_ctx, amount);
 
         Ok(())
     }

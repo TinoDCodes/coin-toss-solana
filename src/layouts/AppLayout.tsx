@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import { ReactNode } from "react";
+import { Toaster } from "react-hot-toast";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
@@ -23,6 +24,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </p>
         </aside>
       </footer>
+      <Toaster position="bottom-right" />
     </div>
   );
 }

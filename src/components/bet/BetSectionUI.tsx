@@ -1,7 +1,7 @@
 "use client";
 
 import { CoinFace } from "@/utils/types";
-import { Coins } from "lucide-react";
+import { Coins, Loader } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
@@ -25,18 +25,25 @@ const faces: CoinFace[] = [
 ];
 
 const BetSectionUI = () => {
-  const { selections, headsMarket, tailsMarket } = useEventData();
+  const {
+    selections,
+    isSelectionsPending,
+    headsMarket,
+    isHeadsMarketPending,
+    tailsMarket,
+    isTailsMarketPending,
+  } = useEventData();
 
   const [selectedFace, setSelectedFace] = useState<CoinFace>(faces[0]);
   const [betAmount, setBetAmount] = useState<string>("1");
-  const [odds, setOdds] = useState<number>(2);
+  const [odds, setOdds] = useState<number>(0);
   const [potentialEarnings, setPotentialEarnings] = useState<number>(0);
 
   useEffect(() => {
     // Calculate potential earnings whenever bet amount changes
     const amount = parseFloat(betAmount) || 0;
     setPotentialEarnings(amount * odds);
-  }, [betAmount]);
+  }, [betAmount, odds]);
 
   useEffect(() => {
     if (headsMarket && tailsMarket) {
@@ -46,7 +53,7 @@ const BetSectionUI = () => {
         setOdds(1 / tailsMarket.price);
       }
     }
-  }, [selectedFace]);
+  }, [selectedFace, headsMarket, tailsMarket]);
 
   const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -64,7 +71,16 @@ const BetSectionUI = () => {
     console.log("selections", selections);
     console.log("heads market", headsMarket);
     console.log("tails market", tailsMarket);
+    console.log("odds", odds);
   };
+
+  if (isSelectionsPending || isHeadsMarketPending || isTailsMarketPending) {
+    return (
+      <div className="flex items-center justify-center">
+        <Loader className="h-10 w-10 text-white animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="justify-self-center flex flex-col items-center space-y-8">
