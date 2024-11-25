@@ -1,7 +1,7 @@
 "use client";
 
 import { ExplorerLink } from "@/components/cluster/cluster-ui";
-import Header from "@/components/Header";
+import Header from "@/components/ui/custom/Header";
 import { ReactNode, useEffect, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 

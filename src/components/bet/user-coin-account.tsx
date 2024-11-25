@@ -10,14 +10,14 @@ import { mplTokenMetadata } from "@metaplex-foundation/mpl-token-metadata";
 import { createAssociatedToken } from "@metaplex-foundation/mpl-toolbox";
 import { publicKey } from "@metaplex-foundation/umi";
 
-export function useTossCoinAccount() {
+export function useUserCoinAccount() {
   const { connection } = useConnection();
   const wallet = useWallet();
 
   const {
-    data: coinAccount,
-    error,
-    isPending,
+    data: userCoinAccount,
+    error: coinAccountError,
+    isPending: isCoinAccountPending,
   } = useQuery({
     queryKey: ["coin-data", wallet.publicKey],
     queryFn: async () => {
@@ -62,5 +62,5 @@ export function useTossCoinAccount() {
     enabled: !!wallet.publicKey,
   });
 
-  return { coinAccount, error };
+  return { userCoinAccount, coinAccountError, isCoinAccountPending };
 }

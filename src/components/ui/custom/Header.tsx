@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { WalletButton } from "./solana/solana-provider";
-import { ClusterUiSelect } from "./cluster/cluster-ui";
 import { CoinBalance } from "./CoinBalance";
+import { WalletButton } from "@/components/solana/solana-provider";
 
 const Header = () => {
   return (

@@ -16,7 +16,8 @@ import {
   mintTokensTo,
 } from "@metaplex-foundation/mpl-toolbox";
 import { base58 } from "@metaplex-foundation/umi/serializers";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
+import { HelperBlock } from "./HelperBlock";
 
 const TOKEN_DECIMALS = 9;
 
@@ -69,7 +70,7 @@ export const CreateMint = () => {
         mint: mintSigner.publicKey,
         owner: umi.identity.publicKey,
       }),
-      amount: BigInt(1000),
+      amount: BigInt(1000 * Math.pow(10, TOKEN_DECIMALS)),
     });
 
     console.log("Sending transaction");
@@ -93,14 +94,12 @@ export const CreateMint = () => {
   };
 
   return (
-    <Button
-      variant="default"
-      size="lg"
-      className="bg-cyan-400 text-white"
-      onClick={handleCreateTokenMint}
-      disabled={!wallet.publicKey}
-    >
-      CREATE TOKEN
-    </Button>
+    <HelperBlock
+      title="Create New Token Mint"
+      explanation="Creates a new fungible token on the Solana Devnet with metadata uploaded to Arweave, mints 1,000 tokens to the user's associated account, and logs the transaction and token details."
+      buttonLabel="CREATE TOKEN"
+      buttonAction={handleCreateTokenMint}
+      buttonDisabled={!wallet.publicKey}
+    />
   );
 };

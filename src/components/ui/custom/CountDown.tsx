@@ -1,9 +1,9 @@
 "use client";
 
+import { useEventData } from "@/components/bet/event-data-access";
 import { getTimeLeft } from "@/utils/helpers";
 import { CountDownTime } from "@/utils/types";
 import { useEffect, useState } from "react";
-import { useEventData } from "./bet/event-data-access";
 
 const CountDown = () => {
   const { eventData, eventError, isEventFetching } = useEventData();

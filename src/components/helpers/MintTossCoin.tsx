@@ -1,7 +1,6 @@
 "use client";
 
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button } from "./ui/button";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import {
@@ -12,6 +11,7 @@ import { TOKEN_DECIMALS } from "@/utils/helpers";
 import { publicKey } from "@metaplex-foundation/umi";
 import { base58 } from "@metaplex-foundation/umi/serializers";
 import { mplTokenMetadata } from "@metaplex-foundation/mpl-token-metadata";
+import { HelperBlock } from "./HelperBlock";
 
 export const MintTossCoin = () => {
   const wallet = useWallet();
@@ -43,14 +43,13 @@ export const MintTossCoin = () => {
   };
 
   return (
-    <Button
-      variant="default"
-      size="lg"
-      className="bg-cyan-400 text-white"
-      onClick={handleMintTossCoin}
-      disabled={!wallet.publicKey}
-    >
-      MINT TOSS COIN
-    </Button>
+    <HelperBlock
+      title="Mint More Tokens"
+      explanation="Mints 200 TossCoin tokens to the user's associated token account on the Solana Devnet and logs the transaction details."
+      buttonLabel="Mint TossCoin"
+      buttonAction={handleMintTossCoin}
+      buttonDisabled={!wallet.publicKey}
+      key="mint-more-tokens"
+    />
   );
 };

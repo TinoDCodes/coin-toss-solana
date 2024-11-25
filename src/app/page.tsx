@@ -1,5 +1,5 @@
 import BetSectionUI from "@/components/bet/BetSectionUI";
-import CountDown from "@/components/CountDown";
+import CountDown from "@/components/ui/custom/CountDown";
 
 export default function Page() {
   return (

@@ -12,9 +12,9 @@ import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import toast from "react-hot-toast";
 import { TOKEN_DECIMALS } from "@/utils/helpers";
-import { useTossCoinAccount } from "../toss-coin-data-access";
 import { getAccount } from "@solana/spl-token";
 import { useTransactionToast } from "@/layouts/AppLayout";
+import { useUserCoinAccount } from "./user-coin-account";
 
 export function useCoinTossProgram() {
   const { cluster } = useCluster();
@@ -23,7 +23,7 @@ export function useCoinTossProgram() {
   const provider = useAnchorProvider();
   const program = getCoinTossProgram(provider);
 
-  const { coinAccount } = useTossCoinAccount();
+  const { userCoinAccount } = useUserCoinAccount();
   const transactionToast = useTransactionToast();
   const mint = new PublicKey(process.env.NEXT_PUBLIC_TOSS_COIN!);
 
@@ -81,7 +81,7 @@ export function useCoinTossProgram() {
         .transferIn(new BN(amount))
         .accounts({
           coinTossTokenMint: mint,
-          senderTokenAccount: coinAccount!.pubkey,
+          senderTokenAccount: userCoinAccount!.pubkey,
         })
         .rpc(),
     onSuccess: (signature) => {
@@ -97,7 +97,7 @@ export function useCoinTossProgram() {
         .transferOut(new BN(5, TOKEN_DECIMALS))
         .accounts({
           coinTossTokenMint: mint,
-          senderTokenAccount: coinAccount!.pubkey,
+          senderTokenAccount: userCoinAccount!.pubkey,
         })
         .rpc(),
     onSuccess: (signature) => {
