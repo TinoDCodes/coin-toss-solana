@@ -6,7 +6,6 @@ import {
   COIN_TOSS_PROGRAM_ID as programId,
   getCoinTossProgram,
 } from "coin_toss/src";
-import { useTransactionToast } from "../ui/ui-layout";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCluster } from "../cluster/cluster-data-access";
 import { PublicKey } from "@solana/web3.js";
@@ -15,6 +14,7 @@ import toast from "react-hot-toast";
 import { TOKEN_DECIMALS } from "@/utils/helpers";
 import { useTossCoinAccount } from "../toss-coin-data-access";
 import { getAccount } from "@solana/spl-token";
+import { useTransactionToast } from "@/layouts/AppLayout";
 
 export function useCoinTossProgram() {
   const { cluster } = useCluster();

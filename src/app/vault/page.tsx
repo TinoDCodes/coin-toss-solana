@@ -6,8 +6,7 @@ import { WalletButton } from "@/components/solana/solana-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ellipsify } from "@/components/ui/ui-layout";
-import { TOKEN_DECIMALS } from "@/utils/helpers";
+import { ellipsify, TOKEN_DECIMALS } from "@/utils/helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Coins, Loader } from "lucide-react";
 import React, { useState } from "react";
@@ -60,11 +59,16 @@ export default function VaultPage() {
 
   return (
     <div className="wrapper h-full flex flex-col items-center space-y-20">
-      <section className="flex flex-col items-center space-y-6">
-        <h1 className="font-bold text-white text-xl text-center">Coin Vault</h1>
-        <button onClick={() => console.log(vaultBalance)}>click</button>
+      <section className="flex flex-col items-center space-y-4">
+        <h1 className="font-bold text-white text-3xl text-center">
+          Coin Vault
+        </h1>
+        <small className="text-base text-white/75">
+          This page displays the token vault balance and lets you manage
+          vault-related tasks.
+        </small>
 
-        <strong className="font-bold text-center text-6xl">
+        <strong className="font-bold text-center text-7xl py-8">
           {vaultBalance} tkns
         </strong>
 
