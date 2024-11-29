@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransactionToast } from "@/layouts/AppLayout";
+import { useTransactionToast } from "@/components/AppLayout";
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {

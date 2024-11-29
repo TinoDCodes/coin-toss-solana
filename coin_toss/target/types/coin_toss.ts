@@ -114,6 +114,152 @@ export type CoinToss = {
       "args": []
     },
     {
+      "name": "placeBet",
+      "discriminator": [
+        222,
+        62,
+        67,
+        220,
+        63,
+        166,
+        126,
+        33
+      ],
+      "accounts": [
+        {
+          "name": "userBetAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "betId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenAccountOwnerPda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  95,
+                  111,
+                  119,
+                  110,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "coinVaultAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "coinTossTokenMint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "userTokenAccount",
+          "writable": true
+        },
+        {
+          "name": "coinTossTokenMint"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "betId",
+          "type": "string"
+        },
+        {
+          "name": "stake",
+          "type": "u64"
+        },
+        {
+          "name": "odds",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "transferIn",
       "discriminator": [
         202,
@@ -330,6 +476,54 @@ export type CoinToss = {
           "type": "u64"
         }
       ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "userBetData",
+      "discriminator": [
+        188,
+        30,
+        67,
+        98,
+        63,
+        117,
+        242,
+        238
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "betIdTooLong",
+      "msg": "The provided Bet Id is too long!"
+    }
+  ],
+  "types": [
+    {
+      "name": "userBetData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "betId",
+            "type": "string"
+          },
+          {
+            "name": "stake",
+            "type": "u64"
+          },
+          {
+            "name": "odds",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ]
 };

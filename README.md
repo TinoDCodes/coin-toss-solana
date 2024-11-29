@@ -92,3 +92,29 @@ Build the web app
 ```shell
 pnpm build
 ```
+
+### Upgrading Solana Program
+
+Check the size of the new program build.
+
+```shell
+ls -lh target/deploy/<program>.so
+```
+
+Check the size of the deployed program.
+
+```shell
+solana program show <PROGRAM_ID>
+```
+
+Extend the size of the deployed program (if it was less than the size of the new build).
+
+```shell
+solana program extend <PROGRAM_ID> <BYTES_SIZE>
+```
+
+Upgrade the program on chain.
+
+```shell
+anchor upgrade --provider.cluster <CLUSTER> --program-id <PROGRAM_ID> target/deploy/<PROGRAM>.so
+```

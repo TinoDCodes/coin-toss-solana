@@ -34,7 +34,7 @@ export default function VaultPage() {
   ) => {
     const { value } = event.target;
 
-    const amount = parseInt(value) <= 0 ? "" : value;
+    const amount = parseFloat(value) <= 0 ? "" : value;
     setDepositAmount(amount);
   };
 
@@ -109,7 +109,8 @@ export default function VaultPage() {
               }`}
               onClick={() => {
                 const actualAmount =
-                  parseInt(depositAmount) * Math.pow(10, TOKEN_DECIMALS);
+                  parseFloat(depositAmount) * Math.pow(10, TOKEN_DECIMALS);
+                console.log(actualAmount);
                 deposit.mutateAsync(actualAmount);
               }}
               disabled={deposit.isPending || !depositAmount.trim()}

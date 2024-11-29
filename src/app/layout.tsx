@@ -2,7 +2,7 @@ import "./globals.css";
 import { ClusterProvider } from "@/components/cluster/cluster-data-access";
 import { SolanaProvider } from "@/components/solana/solana-provider";
 import { ReactQueryProvider } from "./react-query-provider";
-import AppLayout from "@/layouts/AppLayout";
+import AppLayout from "@/components/AppLayout";
 
 export const metadata = {
   title: "Coin Toss Solana",

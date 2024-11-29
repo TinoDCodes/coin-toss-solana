@@ -12,7 +12,7 @@ import {
   AccountTokens,
   AccountTransactions,
 } from "./account-ui";
-import { AppHero } from "@/layouts/AppLayout";
+import { AppHero } from "@/components/AppLayout";
 import { ellipsify } from "@/utils/helpers";
 
 export default function AccountDetailFeature() {

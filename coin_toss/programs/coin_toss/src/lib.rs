@@ -3,14 +3,19 @@ use anchor_spl::token::{transfer, Mint, Token, TokenAccount, Transfer};
 
 declare_id!("AotF3uCcqR7LymaLUproQ3PwmqFqoK7zwg1t7FfU4rb8");
 
+/*---------- global variables ---------*/
+const MAX_BET_ID_LENGTH: usize = 25;
+
 #[program]
 pub mod coin_toss {
     use super::*;
 
+    // ---- INITIALIZATION INSTRUCTION HANDLER
     pub fn initialize(_ctx: Context<Initialize>) -> Result<()> {
         Ok(())
     }
 
+    // ---- DEPOSIT INSTRUCTION HANDLER
     pub fn transfer_in(ctx: Context<TransferAccounts>, amount: u64) -> Result<()> {
         msg!("Depositing {} into coin vault!", amount);
 
@@ -27,6 +32,7 @@ pub mod coin_toss {
         Ok(())
     }
 
+    // ---- WITHDRAWAL INSTRUCTION HANDLER
     pub fn transfer_out(ctx: Context<TransferAccounts>, amount: u64) -> Result<()> {
         msg!("Transfering tokens from vault. Amount: {}!", amount);
 
@@ -47,7 +53,39 @@ pub mod coin_toss {
 
         Ok(())
     }
+
+    // ---- BET PLACEMENT INSTRUCTION HANDLER
+    pub fn place_bet(ctx: Context<PlaceBet>, bet_id: String, stake: u64, odds: u64) -> Result<()> {
+        require!(bet_id.len() <= MAX_BET_ID_LENGTH, CustomError::BetIdTooLong);
+
+        msg!("Transfering user stake of {} tokens, into coin vault!", stake);
+
+        let cpi_ctx = CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.user_token_account.to_account_info(),
+                to: ctx.accounts.coin_vault_account.to_account_info(),
+                authority: ctx.accounts.user.to_account_info(),
+            },
+        );
+        transfer(cpi_ctx, stake)?;
+
+        msg!("Bet placed successfully!");
+        msg!("BetId: {}", bet_id);
+        msg!("Stake: {}", stake);
+        msg!("Odds: {}", odds);
+
+        let user_bet_account = &mut ctx.accounts.user_bet_account;
+        user_bet_account.user = ctx.accounts.user.key();
+        user_bet_account.bet_id = bet_id;
+        user_bet_account.stake = stake;
+        user_bet_account.odds = odds;
+
+        Ok(())
+    }
 }
+
+/*---------- define context structs/types ---------*/
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
@@ -112,3 +150,65 @@ pub struct TransferAccounts<'info> {
     token_program: Program<'info, Token>,
     rent: Sysvar<'info, Rent>,
 }
+
+#[derive(Accounts)]
+#[instruction(bet_id: String)]
+pub struct PlaceBet<'info> {
+    // Derived PDAs
+    #[account(
+        init,
+        seeds = [b"user-bet", user.key().as_ref(), bet_id.as_bytes()],
+        bump,
+        payer = user,
+        space = DISCRIMINATOR + UserBetData::INIT_SPACE
+    )]
+    pub user_bet_account: Account<'info, UserBetData>,
+
+    #[account(mut,
+        seeds=[b"token_account_owner_pda"],
+        bump
+    )]
+    /// CHECK: This PDA is derived programmatically, and the derivation ensures its validity.
+    token_account_owner_pda: AccountInfo<'info>,
+
+    #[account(mut,
+        seeds=[b"token_vault", coin_toss_token_mint.key().as_ref()],
+        bump,
+        token::mint=coin_toss_token_mint,
+        token::authority=token_account_owner_pda,
+    )]
+    /// CHECK: This PDA is derived programmatically, and the derivation ensures its validity.
+    coin_vault_account: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    user: Signer<'info>,
+    #[account(mut)]
+    user_token_account: Account<'info, TokenAccount>,
+
+    coin_toss_token_mint: Account<'info, Mint>,
+    
+    system_program: Program<'info, System>,
+    token_program: Program<'info, Token>,
+    rent: Sysvar<'info, Rent>,
+}
+
+/*---------- define account  structs/types ---------*/
+
+#[account]
+#[derive(InitSpace)]
+pub struct UserBetData {
+    pub user: Pubkey,
+    #[max_len(25)]
+    pub bet_id: String,
+    pub stake: u64,
+    pub odds: u64,
+}
+
+/*---------- define custom errors enum ---------*/
+#[error_code]
+enum CustomError {
+    #[msg("The provided Bet Id is too long!")]
+    BetIdTooLong,
+}
+
+const DISCRIMINATOR: usize = 8;

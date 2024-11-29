@@ -8,6 +8,8 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { useEventData } from "./event-data-access";
+import { ODDS_DECIMALS, TOKEN_DECIMALS } from "@/utils/helpers";
+import { useCoinTossProgram } from "./coin-toss-program";
 
 const faces: CoinFace[] = [
   {
@@ -25,6 +27,7 @@ const faces: CoinFace[] = [
 ];
 
 const BetSectionUI = () => {
+  const { placeBet } = useCoinTossProgram();
   const {
     selections,
     isSelectionsPending,
@@ -42,15 +45,21 @@ const BetSectionUI = () => {
   useEffect(() => {
     // Calculate potential earnings whenever bet amount changes
     const amount = parseFloat(betAmount) || 0;
-    setPotentialEarnings(amount * odds);
+
+    // Round potential earnings to 3 decimal places using Number()
+    const earnings = Number((amount * odds).toFixed(3));
+
+    setPotentialEarnings(earnings);
   }, [betAmount, odds]);
 
   useEffect(() => {
     if (headsMarket && tailsMarket) {
       if (selectedFace.value === "heads") {
-        setOdds(1 / headsMarket.price);
+        const newOdds = Number((1 / headsMarket.price).toFixed(3));
+        setOdds(newOdds);
       } else if (selectedFace.value === "tails") {
-        setOdds(1 / tailsMarket.price);
+        const newOdds = Number((1 / tailsMarket.price).toFixed(3));
+        setOdds(newOdds);
       }
     }
   }, [selectedFace, headsMarket, tailsMarket]);
@@ -67,11 +76,12 @@ const BetSectionUI = () => {
     }
   };
 
-  const handlePlaceBet = () => {
-    console.log("selections", selections);
-    console.log("heads market", headsMarket);
-    console.log("tails market", tailsMarket);
-    console.log("odds", odds);
+  const handlePlaceBet = async () => {
+    const betId: string = "my-test-bet-1";
+    const stake = Number(betAmount) * Math.pow(10, TOKEN_DECIMALS);
+    const betOdds = odds * Math.pow(10, ODDS_DECIMALS);
+
+    await placeBet.mutateAsync({ betId, stake, odds: betOdds });
   };
 
   if (isSelectionsPending || isHeadsMarketPending || isTailsMarketPending) {
@@ -155,10 +165,12 @@ const BetSectionUI = () => {
       <Button
         variant="secondary"
         size="lg"
-        className="w-full bg-[#f59e0b] text-white hover:opacity-90 hover:bg-[#f59e0b] transition"
+        className={`w-full bg-[#f59e0b] text-white hover:opacity-90 hover:bg-[#f59e0b] transition ${
+          placeBet.isPending && "animate-pulse"
+        }`}
         onClick={handlePlaceBet}
       >
-        PLACE BET
+        {placeBet.isPending ? "placing bet..." : "PLACE BET"}
       </Button>
     </div>
   );

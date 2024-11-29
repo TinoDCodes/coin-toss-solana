@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ClusterUiModal } from "./cluster-ui";
 import { ClusterUiTable } from "./cluster-ui";
-import { AppHero } from "@/layouts/AppLayout";
+import { AppHero } from "@/components/AppLayout";
 
 export default function ClusterFeature() {
   const [showModal, setShowModal] = useState(false);

@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "../ui/button";
 
 type HelperBlockProps = {
@@ -6,6 +7,7 @@ type HelperBlockProps = {
   buttonLabel: string;
   buttonAction: () => void;
   buttonDisabled?: boolean;
+  input?: React.ReactNode;
 };
 
 export const HelperBlock = ({
@@ -14,11 +16,20 @@ export const HelperBlock = ({
   buttonLabel,
   buttonAction,
   buttonDisabled,
+  input,
 }: HelperBlockProps) => {
   return (
     <div className="h-[11rem] w-80 bg-[#334b49] rounded-lg shadow-lg p-4 flex flex-col items-center">
       <h2 className="font-bold text-lg text-white">{title}</h2>
-      <p className="text-center text-sm line-clamp-3 mb-2">{explanation}</p>
+      <p
+        className={`text-center text-sm mb-2 ${
+          input ? "line-clamp-1" : "line-clamp-3"
+        }`}
+      >
+        {explanation}
+      </p>
+
+      {input}
 
       <Button
         variant="default"

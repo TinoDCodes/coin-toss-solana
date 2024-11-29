@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { ClusterNetwork, useCluster } from "./cluster-data-access";
 import { Connection } from "@solana/web3.js";
-import { AppModal } from "@/layouts/AppLayout";
+import { AppModal } from "@/components/AppLayout";
 
 export function ExplorerLink({
   path,

@@ -33,6 +33,7 @@ export const getTimeLeft = (target: Date): CountDownTime => {
 };
 
 export const TOKEN_DECIMALS = 9;
+export const ODDS_DECIMALS = 3;
 
 export function ellipsify(str = "", len = 4) {
   if (str.length > 30) {

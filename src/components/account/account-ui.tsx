@@ -15,7 +15,7 @@ import {
   useTransferSol,
 } from "./account-data-access";
 import { ellipsify } from "@/utils/helpers";
-import { AppModal } from "@/layouts/AppLayout";
+import { AppModal } from "@/components/AppLayout";
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });

@@ -21,7 +21,7 @@ test = "../node_modules/.bin/jest --preset ts-jest"
 [test]
 startup_wait = 5000
 shutdown_wait = 2000
-upgradeable = false
+upgradeable = true
 
 [test.validator]
 bind_address = "127.0.0.1"
