@@ -1,4 +1,4 @@
-import { CountDownTime } from "./types";
+import { Bet, CountDownTime } from "./types";
 
 /**
  * Calculates the remaining time until a target date, formatted as a digital clock.
@@ -42,4 +42,34 @@ export function ellipsify(str = "", len = 4) {
     );
   }
   return str;
+}
+
+export async function submitBet(betData: Bet) {
+  try {
+    const response = await fetch("/api/placeBet", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        betId: betData.bet_id,
+        eventId: betData.event_id,
+        selectionId: betData.selection_id,
+        stake: betData.stake,
+        odds: betData.odds,
+        walletAddress: betData.wallet_address,
+        status: betData.status,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to submit bet");
+    }
+
+    const result = await response.json();
+    console.log("Bet submitted successfully:", result);
+  } catch (error) {
+    console.error("Error submitting bet:", error);
+  }
 }

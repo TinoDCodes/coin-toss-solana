@@ -41,11 +41,13 @@ export type Market = {
 export type BetStatus = "open" | "lost" | "won" | "void";
 
 export type Bet = {
-  id: number;
-  created_at: string;
+  id?: number;
+  bet_id: string;
   event_id: number;
   selection_id: number;
   stake: number;
   odds: number;
+  wallet_address: string;
   status: BetStatus;
+  created_at?: string;
 };

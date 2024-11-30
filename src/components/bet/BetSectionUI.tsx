@@ -1,6 +1,6 @@
 "use client";
 
-import { CoinFace } from "@/utils/types";
+import { Bet, CoinFace } from "@/utils/types";
 import { Coins, Loader } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -8,8 +8,9 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { useEventData } from "./event-data-access";
-import { ODDS_DECIMALS, TOKEN_DECIMALS } from "@/utils/helpers";
+import { ODDS_DECIMALS, submitBet, TOKEN_DECIMALS } from "@/utils/helpers";
 import { useCoinTossProgram } from "./coin-toss-program";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const faces: CoinFace[] = [
   {
@@ -27,9 +28,11 @@ const faces: CoinFace[] = [
 ];
 
 const BetSectionUI = () => {
+  const wallet = useWallet();
   const { placeBet } = useCoinTossProgram();
   const {
     selections,
+    eventData,
     isSelectionsPending,
     headsMarket,
     isHeadsMarketPending,
@@ -77,11 +80,32 @@ const BetSectionUI = () => {
   };
 
   const handlePlaceBet = async () => {
-    const betId: string = "my-test-bet-1";
+    const betId: string = "my-test-bet-8";
     const stake = Number(betAmount) * Math.pow(10, TOKEN_DECIMALS);
     const betOdds = odds * Math.pow(10, ODDS_DECIMALS);
+    const selectionId =
+      selectedFace.value === "heads"
+        ? headsMarket!.selection_id
+        : tailsMarket!.selection_id;
 
-    await placeBet.mutateAsync({ betId, stake, odds: betOdds });
+    const res = await placeBet.mutateAsync({ betId, stake, odds: betOdds });
+
+    if (res) {
+      const betData: Bet = {
+        bet_id: betId,
+        event_id: eventData!.id,
+        selection_id: selectionId,
+        stake: stake,
+        odds: odds,
+        wallet_address: wallet.publicKey!.toString(),
+        status: "open",
+      };
+
+      await submitBet(betData);
+
+      setSelectedFace(faces[0]);
+      setBetAmount("1");
+    }
   };
 
   if (isSelectionsPending || isHeadsMarketPending || isTailsMarketPending) {
