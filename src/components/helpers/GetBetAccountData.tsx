@@ -5,11 +5,19 @@ import { HelperBlock } from "./HelperBlock";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { PublicKey } from "@solana/web3.js";
-import { COIN_TOSS_PROGRAM_ID as programId } from "coin_toss/src";
+import {
+  getCoinTossProgram,
+  COIN_TOSS_PROGRAM_ID as programId,
+} from "coin_toss/src";
+import { useAnchorProvider } from "../solana/solana-provider";
 
 export const GetBetAccountData = () => {
   const { connection } = useConnection();
   const wallet = useWallet();
+  const provider = useAnchorProvider();
+
+  // Anchor program instance for the Coin Toss program
+  const program = getCoinTossProgram(provider);
 
   const [betId, setBetId] = useState<string>("");
 
@@ -33,9 +41,16 @@ export const GetBetAccountData = () => {
       programId
     );
 
-    const betAccountInfo = await connection.getAccountInfo(pda);
+    const betAccountData = await program.account.userBetData.fetch(pda);
 
-    console.log("Bet account info:", betAccountInfo);
+    const humanReadableData = {
+      user: betAccountData.user.toString(),
+      betId: betAccountData.betId,
+      stake: betAccountData.stake.toNumber(),
+      odds: betAccountData.odds.toNumber(),
+    };
+
+    console.log("Bet account info:", humanReadableData);
   };
 
   return (
