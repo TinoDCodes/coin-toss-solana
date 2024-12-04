@@ -25,7 +25,7 @@ export const CloseBetAccount = () => {
       const userAddress = new PublicKey(
         "4ieZVKt1DtbHmtyHr2PHwfdHn61LZi6VT1GBsWMgX4e8"
       );
-      const betId = "my-test-bet-3";
+      const betId = "my-test-bet-7";
 
       const signature = await program.methods
         .closeBetAccount(betId, userAddress)

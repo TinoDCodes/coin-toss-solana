@@ -58,7 +58,8 @@ export type CoinToss = {
         {
           "name": "signer",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
         },
         {
           "name": "systemProgram",
@@ -561,6 +562,11 @@ export type CoinToss = {
       "code": 6000,
       "name": "betIdTooLong",
       "msg": "The provided Bet Id is too long!"
+    },
+    {
+      "code": 6001,
+      "name": "unauthorizedUserAction",
+      "msg": "Not authorised to perform this action!"
     }
   ],
   "types": [
