@@ -80,7 +80,7 @@ const BetSectionUI = () => {
   };
 
   const handlePlaceBet = async () => {
-    const betId: string = "my-test-bet-8";
+    const betId: string = "my-test-bet-10";
     const stake = Number(betAmount) * Math.pow(10, TOKEN_DECIMALS);
     const betOdds = odds * Math.pow(10, ODDS_DECIMALS);
     const selectionId =
@@ -193,6 +193,7 @@ const BetSectionUI = () => {
           placeBet.isPending && "animate-pulse"
         }`}
         onClick={handlePlaceBet}
+        disabled={!wallet.publicKey}
       >
         {placeBet.isPending ? "placing bet..." : "PLACE BET"}
       </Button>

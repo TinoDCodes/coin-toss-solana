@@ -14,6 +14,69 @@ export type CoinToss = {
   },
   "instructions": [
     {
+      "name": "closeBetAccount",
+      "discriminator": [
+        46,
+        209,
+        107,
+        217,
+        227,
+        100,
+        211,
+        211
+      ],
+      "accounts": [
+        {
+          "name": "userBetAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "userAddress"
+              },
+              {
+                "kind": "arg",
+                "path": "betId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "betId",
+          "type": "string"
+        },
+        {
+          "name": "userAddress",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "initialize",
       "discriminator": [
         175,

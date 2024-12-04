@@ -83,6 +83,13 @@ pub mod coin_toss {
 
         Ok(())
     }
+
+    // ---- DELETE BET ACCOUNT INSTRUCTION HANDLER
+    pub fn close_bet_account(_ctx: Context<CloseBetAccount>, bet_id: String, user_address: Pubkey) -> Result<()> {
+        msg!("Bet account for user {} closed!", user_address);
+
+        Ok(())
+    }
 }
 
 /*---------- define context structs/types ---------*/
@@ -190,6 +197,22 @@ pub struct PlaceBet<'info> {
     system_program: Program<'info, System>,
     token_program: Program<'info, Token>,
     rent: Sysvar<'info, Rent>,
+}
+
+#[derive(Accounts)]
+#[instruction(bet_id: String, user_address: Pubkey)]
+pub struct CloseBetAccount<'info> {
+    #[account(
+        mut,
+        seeds = [b"user-bet", user_address.as_ref(), bet_id.as_bytes()],
+        bump,
+        close = signer
+    )]
+    pub user_bet_account: Account<'info, UserBetData>,
+
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    pub system_program: Program<'info, System>
 }
 
 /*---------- define account  structs/types ---------*/
