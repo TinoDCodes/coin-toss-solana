@@ -4,6 +4,7 @@ use anchor_spl::token::{transfer, Mint, Token, TokenAccount, Transfer};
 declare_id!("AotF3uCcqR7LymaLUproQ3PwmqFqoK7zwg1t7FfU4rb8");
 
 /*---------- global variables ---------*/
+const ADMIN_PUBKEY: Pubkey = pubkey!("EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7");
 const MAX_BET_ID_LENGTH: usize = 25;
 
 #[program]
@@ -27,7 +28,7 @@ pub mod coin_toss {
                 authority: ctx.accounts.signer.to_account_info(),
             },
         );
-        transfer(cpi_ctx, amount)?;
+        let _ = transfer(cpi_ctx, amount)?;
 
         Ok(())
     }
@@ -49,7 +50,7 @@ pub mod coin_toss {
             },
             signer
         );
-        transfer(cpi_ctx, amount);
+        let _ = transfer(cpi_ctx, amount);
 
         Ok(())
     }
@@ -68,7 +69,7 @@ pub mod coin_toss {
                 authority: ctx.accounts.user.to_account_info(),
             },
         );
-        transfer(cpi_ctx, stake)?;
+        let _ = transfer(cpi_ctx, stake)?;
 
         msg!("Bet placed successfully!");
         msg!("BetId: {}", bet_id);
@@ -85,7 +86,7 @@ pub mod coin_toss {
     }
 
     // ---- DELETE BET ACCOUNT INSTRUCTION HANDLER
-    pub fn close_bet_account(_ctx: Context<CloseBetAccount>, bet_id: String, user_address: Pubkey) -> Result<()> {
+    pub fn close_bet_account(_ctx: Context<CloseBetAccount>, _bet_id: String, user_address: Pubkey) -> Result<()> {
         msg!("Bet account for user {} closed!", user_address);
 
         Ok(())
@@ -210,7 +211,10 @@ pub struct CloseBetAccount<'info> {
     )]
     pub user_bet_account: Account<'info, UserBetData>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        address = ADMIN_PUBKEY @ CustomError::UnauthorizedUserAction
+    )]
     pub signer: Signer<'info>,
     pub system_program: Program<'info, System>
 }
@@ -232,6 +236,8 @@ pub struct UserBetData {
 enum CustomError {
     #[msg("The provided Bet Id is too long!")]
     BetIdTooLong,
+    #[msg("Not authorised to perform this action!")]
+    UnauthorizedUserAction
 }
 
 const DISCRIMINATOR: usize = 8;
