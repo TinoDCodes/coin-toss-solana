@@ -85,6 +85,34 @@ pub mod coin_toss {
         Ok(())
     }
 
+    // ---- BET PAYOUT INSTRUCTION HANDLER
+    pub fn process_bet_payout(ctx: Context<BetPayout>, bet_id: String, _receiver_address: Pubkey) -> Result<()> {
+        require!(bet_id.len() <= MAX_BET_ID_LENGTH, CustomError::BetIdTooLong);
+
+        let bet = &ctx.accounts.user_bet_account;
+
+        // calculate the ammount to be paid out
+        let payout: u128 = (bet.stake as u128 * bet.odds as u128) / 1_000; // divide by 1_000 to account for odds thats have been scaled by 10^3
+        let payout: u64 = payout.try_into().expect("Payout too large");
+
+        let bump = ctx.bumps.token_account_owner_pda;
+        let seeds = &[b"token_account_owner_pda".as_ref(), &[bump]];
+        let signer = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.coin_vault_account.to_account_info(),
+                to: ctx.accounts.receiver_token_account.to_account_info(),
+                authority: ctx.accounts.token_account_owner_pda.to_account_info(),
+            },
+            signer
+        );
+        let _ = transfer(cpi_ctx, payout);
+
+        Ok(())
+    }
+
     // ---- DELETE BET ACCOUNT INSTRUCTION HANDLER
     pub fn close_bet_account(_ctx: Context<CloseBetAccount>, _bet_id: String, user_address: Pubkey) -> Result<()> {
         msg!("Bet account for user {} closed!", user_address);
@@ -195,6 +223,48 @@ pub struct PlaceBet<'info> {
 
     coin_toss_token_mint: Account<'info, Mint>,
     
+    system_program: Program<'info, System>,
+    token_program: Program<'info, Token>,
+    rent: Sysvar<'info, Rent>,
+}
+
+#[derive(Accounts)]
+#[instruction(bet_id: String, receiver_address: Pubkey)]
+pub struct BetPayout<'info> {
+    // Derived PDAs
+    #[account(
+        mut,
+        seeds = [b"user-bet", receiver_address.as_ref(), bet_id.as_bytes()],
+        bump,
+    )]
+    pub user_bet_account: Account<'info, UserBetData>,
+
+    #[account(mut,
+        seeds=[b"token_account_owner_pda"],
+        bump
+    )]
+    /// CHECK: This PDA is derived programmatically, and the derivation ensures its validity.
+    token_account_owner_pda: AccountInfo<'info>,
+
+    #[account(mut,
+        seeds=[b"token_vault", coin_toss_token_mint.key().as_ref()],
+        bump,
+        token::mint=coin_toss_token_mint,
+        token::authority=token_account_owner_pda,
+    )]
+    /// CHECK: This PDA is derived programmatically, and the derivation ensures its validity.
+    coin_vault_account: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    receiver_token_account: Account<'info, TokenAccount>,
+
+    coin_toss_token_mint: Account<'info, Mint>,
+    
+    #[account(
+        mut,
+        address = ADMIN_PUBKEY @ CustomError::UnauthorizedUserAction
+    )]
+    signer: Signer<'info>,
     system_program: Program<'info, System>,
     token_program: Program<'info, Token>,
     rent: Sysvar<'info, Rent>,

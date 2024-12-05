@@ -2,6 +2,7 @@ import { CloseBetAccount } from "@/components/helpers/CloseBetAccount";
 import { CreateMint } from "@/components/helpers/CreateMint";
 import { GetBetAccountData } from "@/components/helpers/GetBetAccountData";
 import { MintTossCoin } from "@/components/helpers/MintTossCoin";
+import { PayoutBet } from "@/components/helpers/PayoutBet";
 
 export default function HelpersPage() {
   return (
@@ -10,6 +11,7 @@ export default function HelpersPage() {
       <MintTossCoin />
       <GetBetAccountData />
       <CloseBetAccount />
+      <PayoutBet />
     </div>
   );
 }

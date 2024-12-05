@@ -25,7 +25,7 @@ export const CloseBetAccount = () => {
       const userAddress = new PublicKey(
         "4ieZVKt1DtbHmtyHr2PHwfdHn61LZi6VT1GBsWMgX4e8"
       );
-      const betId = "my-test-bet-7";
+      const betId = "my-test-bet-8";
 
       const signature = await program.methods
         .closeBetAccount(betId, userAddress)
@@ -35,7 +35,7 @@ export const CloseBetAccount = () => {
 
       transactionToast(signature);
     } catch (error) {
-      toast.error("Failed to run Initialize instruction on Coin Toss program");
+      toast.error("Unable to close bet account!");
       console.error(error);
     }
   };

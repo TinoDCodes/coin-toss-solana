@@ -324,6 +324,149 @@ export type CoinToss = {
       ]
     },
     {
+      "name": "processBetPayout",
+      "discriminator": [
+        194,
+        188,
+        128,
+        159,
+        81,
+        101,
+        53,
+        115
+      ],
+      "accounts": [
+        {
+          "name": "userBetAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "receiverAddress"
+              },
+              {
+                "kind": "arg",
+                "path": "betId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenAccountOwnerPda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  95,
+                  111,
+                  119,
+                  110,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "coinVaultAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "coinTossTokenMint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "receiverTokenAccount",
+          "writable": true
+        },
+        {
+          "name": "coinTossTokenMint"
+        },
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true,
+          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "betId",
+          "type": "string"
+        },
+        {
+          "name": "receiverAddress",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "transferIn",
       "discriminator": [
         202,
