@@ -25,7 +25,7 @@ export const PayoutBet = () => {
       const userAddress = new PublicKey(
         "4ieZVKt1DtbHmtyHr2PHwfdHn61LZi6VT1GBsWMgX4e8"
       );
-      const betId = "my-test-bet-8";
+      const betId = "my-test-bet-9";
 
       const receiverTokenAccount = getAssociatedTokenAddressSync(
         mint,
