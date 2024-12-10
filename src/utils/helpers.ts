@@ -1,4 +1,5 @@
 import { Bet, CountDownTime } from "./types";
+import { customAlphabet } from "nanoid";
 
 /**
  * Calculates the remaining time until a target date, formatted as a digital clock.
@@ -67,9 +68,18 @@ export async function submitBet(betData: Bet) {
       throw new Error(error.error || "Failed to submit bet");
     }
 
-    const result = await response.json();
-    console.log("Bet submitted successfully:", result);
+    /* FOR TESTING */
+    // const result = await response.json();
+    // console.log("Bet submitted successfully:", result);
   } catch (error) {
     console.error("Error submitting bet:", error);
   }
 }
+
+export const newBetId = () => {
+  const alphabet =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const nanoid = customAlphabet(alphabet, 25);
+
+  return nanoid();
+};

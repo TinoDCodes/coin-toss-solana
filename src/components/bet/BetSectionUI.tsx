@@ -8,7 +8,12 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { useEventData } from "./event-data-access";
-import { ODDS_DECIMALS, submitBet, TOKEN_DECIMALS } from "@/utils/helpers";
+import {
+  newBetId,
+  ODDS_DECIMALS,
+  submitBet,
+  TOKEN_DECIMALS,
+} from "@/utils/helpers";
 import { useCoinTossProgram } from "./coin-toss-program";
 import { useWallet } from "@solana/wallet-adapter-react";
 
@@ -80,7 +85,7 @@ const BetSectionUI = () => {
   };
 
   const handlePlaceBet = async () => {
-    const betId: string = "my-test-bet-10";
+    const betId: string = newBetId();
     const stake = Number(betAmount) * Math.pow(10, TOKEN_DECIMALS);
     const betOdds = odds * Math.pow(10, ODDS_DECIMALS);
     const selectionId =
