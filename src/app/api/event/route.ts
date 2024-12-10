@@ -1,9 +1,34 @@
 import { createServiceRoleClient } from "@/utils/supabase/admin";
 
+type FlipResult = "heads" | "tails";
+
 export async function POST(request: Request) {
   const supabase = createServiceRoleClient();
 
   try {
+    /*---------- PERFORM COIN TOSS ----------*/
+    const flip = Math.random();
+    const result: FlipResult = flip <= 0.5 ? "heads" : "tails";
+
+    const { data: tossData, error: tossError } = await supabase
+      .from("events")
+      .update({
+        result,
+      })
+      .eq("result", "pending");
+
+    if (tossError) {
+      return Response.json(
+        { success: false, tossError },
+        {
+          status: 400,
+          statusText: "Failed to perform coin toss!",
+        }
+      );
+    }
+    /*--------------------------------------------*/
+
+    /*---------- CREATE A NEW EVENT ----------*/
     // Calculate the next hour
     const now = new Date();
     const nextHour = new Date(
@@ -16,20 +41,30 @@ export async function POST(request: Request) {
     ).toISOString(); // Convert to ISO format for database storage
 
     // Insert the event into the database
-    const { data, error } = await supabase.from("events").insert([
-      {
-        title: `Coin Toss %${nextHour}%`,
-        date_time: nextHour,
+    const { data: eventData, error: eventError } = await supabase
+      .from("events")
+      .insert([
+        {
+          title: `Coin Toss %${nextHour}%`,
+          date_time: nextHour,
 
-        sport: "Esports",
-        result: "pending",
-      },
-    ]);
+          sport: "Esports",
+          result: "pending",
+        },
+      ]);
 
-    if (error) throw error;
+    if (eventError) {
+      return Response.json(
+        { success: false, eventError },
+        {
+          status: 400,
+          statusText: "Failed to create new coin toss event!",
+        }
+      );
+    }
 
     return Response.json(
-      { success: true, event: data },
+      { success: true, event: eventData },
       {
         status: 201,
       }
