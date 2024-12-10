@@ -26,7 +26,7 @@ export function useEventData() {
 
       return event;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds
   });
 
   const eventId = eventData?.id;
