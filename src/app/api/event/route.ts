@@ -2,7 +2,16 @@ import { createServiceRoleClient } from "@/utils/supabase/admin";
 
 type FlipResult = "heads" | "tails";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
+  /*--------- SECURE THE API ROUTE ----------*/
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
+  /*--------------------------------------------*/
+
   const supabase = createServiceRoleClient();
 
   try {
