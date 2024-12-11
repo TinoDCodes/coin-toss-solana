@@ -27,6 +27,7 @@ export function useEventData() {
       return event;
     },
     staleTime: 30 * 1000, // 30 seconds
+    refetchInterval: 30 * 1000, // 30 seconds
   });
 
   const eventId = eventData?.id;
@@ -53,7 +54,8 @@ export function useEventData() {
 
       return [heads, tails];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds
+    refetchInterval: 30 * 1000, // 30 seconds
     // The query will not execute until the eventId exists.
     enabled: !!eventId,
   });
@@ -77,7 +79,8 @@ export function useEventData() {
       const market: Market = data;
       return market;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds
+    refetchInterval: 30 * 1000, // 30 seconds
     // The query will not execute until the selections exist.
     enabled: !!selections,
   });
@@ -101,7 +104,8 @@ export function useEventData() {
       const market: Market = data;
       return market;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds
+    refetchInterval: 30 * 1000, // 30 seconds
     // The query will not execute until the selections exist.
     enabled: !!selections,
   });
