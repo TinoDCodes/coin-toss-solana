@@ -2,8 +2,8 @@
 
 import { useCoinTossProgram } from "@/components/bet/coin-toss-program";
 import { ExplorerLink } from "@/components/cluster/cluster-ui";
-import { WalletButton } from "@/components/solana/solana-provider";
 import { Button } from "@/components/ui/button";
+import { NotConnectedAlert } from "@/components/ui/custom/NotConnectedAlert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ellipsify, TOKEN_DECIMALS } from "@/utils/helpers";
@@ -82,7 +82,7 @@ export default function VaultPage() {
 
       {/*------ COIN TOSS SOLANA PROGRAM UTILITIES ------*/}
       {!publicKey ? (
-        <WalletButton />
+        <NotConnectedAlert />
       ) : (
         <section className="flex items-center space-x-10">
           <article className="flex flex-col space-y-4">

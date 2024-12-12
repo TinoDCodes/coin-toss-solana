@@ -16,18 +16,19 @@ import {
 } from "@/utils/helpers";
 import { useCoinTossProgram } from "./coin-toss-program";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { NotConnectedAlert } from "../ui/custom/NotConnectedAlert";
 
 const faces: CoinFace[] = [
   {
     id: 1,
     label: "Heads",
-    imageSrc: "/heads-coin.svg",
+    imageSrc: "/heads.png",
     value: "heads",
   },
   {
     id: 2,
     label: "Tails",
-    imageSrc: "/tails-coin.svg",
+    imageSrc: "/tails.png",
     value: "tails",
   },
 ];
@@ -142,10 +143,10 @@ const BetSectionUI = () => {
               <Image
                 src={face.imageSrc}
                 alt={`${face.value} coin`}
-                height={96}
-                width={96}
-                sizes="96px"
-                className="h-24 w-24"
+                height={112}
+                width={112}
+                sizes="256px"
+                className="h-28 w-28"
               />
             </button>
 
@@ -191,17 +192,21 @@ const BetSectionUI = () => {
         </div>
       </section>
 
-      <Button
-        variant="secondary"
-        size="lg"
-        className={`w-full bg-[#f59e0b] text-white hover:opacity-90 hover:bg-[#f59e0b] transition ${
-          placeBet.isPending && "animate-pulse"
-        }`}
-        onClick={handlePlaceBet}
-        disabled={!wallet.publicKey}
-      >
-        {placeBet.isPending ? "placing bet..." : "PLACE BET"}
-      </Button>
+      {wallet.publicKey ? (
+        <Button
+          variant="secondary"
+          size="lg"
+          className={`w-full bg-[#f59e0b] text-white hover:opacity-90 hover:bg-[#f59e0b] transition ${
+            placeBet.isPending && "animate-pulse"
+          }`}
+          onClick={handlePlaceBet}
+          disabled={!wallet.publicKey}
+        >
+          {placeBet.isPending ? "placing bet..." : "PLACE BET"}
+        </Button>
+      ) : (
+        <NotConnectedAlert />
+      )}
     </div>
   );
 };
