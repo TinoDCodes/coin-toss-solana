@@ -118,3 +118,5 @@ Upgrade the program on chain.
 ```shell
 anchor upgrade --provider.cluster <CLUSTER> --program-id <PROGRAM_ID> target/deploy/<PROGRAM>.so
 ```
+
+Can you generate concise, clear but effective JSDoc commenting/code comments/ documentation wherever necessary for the following code. Make sure to follow modern software development best practices for Next js, React, Typescript, Javascript etc.
