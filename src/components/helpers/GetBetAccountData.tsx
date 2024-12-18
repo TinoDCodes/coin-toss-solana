@@ -19,8 +19,10 @@ export const GetBetAccountData = () => {
   // Anchor program instance for the Coin Toss program
   const program = getCoinTossProgram(provider);
 
+  // -------- STATE VARIABLES ---------
   const [betId, setBetId] = useState<string>("");
 
+  // Input component for entering the Bet ID.
   const betIdInput = (
     <Input
       id="betId"
@@ -31,7 +33,17 @@ export const GetBetAccountData = () => {
     />
   );
 
+  /**
+   * Fetches and logs the data for a specific bet account using its Program Derived Address (PDA).
+   *
+   * Steps:
+   * 1. Derives the PDA for the bet account using the "user-bet" seed, wallet public key, and bet ID.
+   * 2. Fetches the bet account data from the program.
+   * 3. Converts raw data to a human-readable format.
+   * 4. Logs the fetched bet account data to the console.
+   */
   const handleGetBetAccountData = async () => {
+    // Derive the Program Derived Address (PDA) for the bet account.
     const [pda] = await PublicKey.findProgramAddressSync(
       [
         Buffer.from("user-bet"),
@@ -43,6 +55,7 @@ export const GetBetAccountData = () => {
 
     const betAccountData = await program.account.userBetData.fetch(pda);
 
+    // Format the data into a human-readable format.
     const humanReadableData = {
       user: betAccountData.user.toString(),
       betId: betAccountData.betId,

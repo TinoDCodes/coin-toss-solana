@@ -2,15 +2,29 @@ import React from "react";
 import { Button } from "../ui/button";
 
 type HelperBlockProps = {
+  /** The title displayed at the top of the helper block. */
   title: string;
+  /** A brief explanation or description shown below the title. */
   explanation: string;
+  /** Label for the primary action button. */
   buttonLabel: string;
+  /** Optional function to execute when the button is clicked. */
   buttonAction?: () => void;
+  /** Determines if the button should be disabled. */
   buttonDisabled?: boolean;
+  /** Optional input field or additional ReactNode displayed within the block. */
   input?: React.ReactNode;
+  /** A custom button component to replace the default action button. */
   customButton?: React.ReactNode;
 };
 
+/**
+ * A reusable component that displays a helper block with a title, explanation,
+ * optional input, and customizable button actions.
+ *
+ * @param {HelperBlockProps} props - The properties for the helper block.
+ * @returns {JSX.Element} A styled helper block component.
+ */
 export const HelperBlock = ({
   title,
   explanation,

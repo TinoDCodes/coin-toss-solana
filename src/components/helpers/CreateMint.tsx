@@ -21,76 +21,106 @@ import { HelperBlock } from "./HelperBlock";
 
 const TOKEN_DECIMALS = 9;
 
+/**
+ * Handles the creation of a new fungible token mint on the Solana blockchain.
+ *
+ * This process involves:
+ * 1. Uploading metadata to Arweave using the Irys uploader.
+ * 2. Generating a new mint account for the token.
+ * 3. Creating the mint and token accounts if needed.
+ * 4. Minting initial tokens to the associated token account.
+ * 5. Logging transaction and token details for reference.
+ */
 export const CreateMint = () => {
   const wallet = useWallet();
 
+  /**
+   * Handles the creation of a new fungible token mint on the Solana blockchain.
+   *
+   * This process involves:
+   * 1. Uploading metadata to Arweave using the Irys uploader.
+   * 2. Generating a new mint account for the token.
+   * 3. Creating the mint and token accounts if needed.
+   * 4. Minting initial tokens to the associated token account.
+   * 5. Logging transaction and token details for reference.
+   */
   const handleCreateTokenMint = async () => {
-    // creating an umi instance with the user's wallet
-    const umi = createUmi("https://api.devnet.solana.com");
-    umi
-      .use(walletAdapterIdentity(wallet))
-      .use(mplTokenMetadata())
-      .use(irysUploader());
+    try {
+      // Create an Umi instance for interacting with Solana.
+      const umi = createUmi("https://api.devnet.solana.com");
+      umi
+        .use(walletAdapterIdentity(wallet)) // Integrate wallet for transactions.
+        .use(mplTokenMetadata()) // Use metadata module for token metadata creation.
+        .use(irysUploader()); // Use Irys for metadata upload to Arweave.
 
-    const metadata = {
-      name: "Nash Toss Coin",
-      symbol: "NATOC",
-      description:
-        "Nash Toss Coin is a token created for nash's coin toss solana dapp",
-      image:
-        "https://unsplash.com/photos/a-person-holding-a-coin-in-their-hand-mJcQSltkdeM",
-    };
+      // Metadata for the token, including image and description.
+      const metadata = {
+        name: "Nash Toss Coin",
+        symbol: "NATOC",
+        description:
+          "Nash Toss Coin is a token created for Nash's coin toss Solana dApp",
+        image:
+          "https://unsplash.com/photos/a-person-holding-a-coin-in-their-hand-mJcQSltkdeM",
+      };
 
-    // Call upon Umi's `uploadJson` function to upload our metadata to Arweave via Irys.
-    const metadataUri = await umi.uploader.uploadJson(metadata).catch((err) => {
-      throw new Error(err);
-    });
+      // Upload metadata to Arweave via the Irys uploader.
+      const metadataUri = await umi.uploader
+        .uploadJson(metadata)
+        .catch((err) => {
+          throw new Error(`Failed to upload metadata: ${err}`);
+        });
 
-    const mintSigner = generateSigner(umi);
+      // Generate a new signer for the token mint.
+      const mintSigner = generateSigner(umi);
 
-    const createFungibleIx = await createFungible(umi, {
-      mint: mintSigner,
-      name: "Nash Toss Coin",
-      uri: metadataUri,
-      sellerFeeBasisPoints: percentAmount(0),
-      decimals: TOKEN_DECIMALS,
-    });
+      // Create the fungible token mint instruction.
+      const createFungibleIx = await createFungible(umi, {
+        mint: mintSigner, // The token mint signer.
+        name: "Nash Toss Coin", // Token name.
+        uri: metadataUri, // Metadata URI pointing to Arweave.
+        sellerFeeBasisPoints: percentAmount(0), // No royalty fee.
+        decimals: TOKEN_DECIMALS, // Token precision/decimals.
+      });
 
-    // This instruction will create a new Associated Token Account if required, if one is found then it skips.
-    const createTokenAccountIx = await createTokenIfMissing(umi, {
-      mint: mintSigner.publicKey,
-      owner: umi.identity.publicKey,
-      ataProgram: getSplAssociatedTokenProgramId(umi),
-    });
-
-    // The final instruction (if required) is to mint the tokens to the token account in the previous ix.
-    const mintTokensIx = await mintTokensTo(umi, {
-      mint: mintSigner.publicKey,
-      token: findAssociatedTokenPda(umi, {
+      // Ensure the associated token account exists for the mint owner.
+      const createTokenAccountIx = await createTokenIfMissing(umi, {
         mint: mintSigner.publicKey,
         owner: umi.identity.publicKey,
-      }),
-      amount: BigInt(1000 * Math.pow(10, TOKEN_DECIMALS)),
-    });
+        ataProgram: getSplAssociatedTokenProgramId(umi), // Associated Token Program.
+      });
 
-    console.log("Sending transaction");
-    const tx = await createFungibleIx
-      .add(createTokenAccountIx)
-      .add(mintTokensIx)
-      .sendAndConfirm(umi);
+      // Mint initial tokens to the associated token account.
+      const mintTokensIx = await mintTokensTo(umi, {
+        mint: mintSigner.publicKey, // Mint address.
+        token: findAssociatedTokenPda(umi, {
+          mint: mintSigner.publicKey,
+          owner: umi.identity.publicKey, // Owner of the token account.
+        }),
+        amount: BigInt(1000 * Math.pow(10, TOKEN_DECIMALS)), // Initial token supply.
+      });
 
-    // finally we can deserialize the signature that we can check on chain.
-    const signature = base58.deserialize(tx.signature)[0];
+      // Combine instructions and send the transaction.
+      console.log("Sending transaction");
+      const tx = await createFungibleIx
+        .add(createTokenAccountIx)
+        .add(mintTokensIx)
+        .sendAndConfirm(umi);
 
-    // Log out the signature and the links to the transaction and the NFT.
-    // Explorer links are for the devnet chain, you can change the clusters to mainnet.
-    console.log("\nTransaction Complete");
-    console.log("View Transaction on Solana Explorer");
-    console.log(`https://explorer.solana.com/tx/${signature}?cluster=devnet`);
-    console.log("View Token on Solana Explorer");
-    console.log(
-      `https://explorer.solana.com/address/${mintSigner.publicKey}?cluster=devnet`
-    );
+      // Deserialize the transaction signature for display.
+      const signature = base58.deserialize(tx.signature)[0];
+
+      // Log the transaction and token details for user reference.
+      console.log("\nTransaction Complete");
+      console.log("View Transaction on Solana Explorer:");
+      console.log(`https://explorer.solana.com/tx/${signature}?cluster=devnet`);
+      console.log("View Token on Solana Explorer:");
+      console.log(
+        `https://explorer.solana.com/address/${mintSigner.publicKey}?cluster=devnet`
+      );
+    } catch (error) {
+      // Handle any errors during token mint creation.
+      console.error("Failed to create token mint:", error);
+    }
   };
 
   return (
