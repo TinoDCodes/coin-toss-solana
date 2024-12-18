@@ -24,7 +24,9 @@ import { useState } from "react";
 export const CloseBetDialog = () => {
   const wallet = useWallet();
   const provider = useAnchorProvider();
+  const transactionToast = useTransactionToast();
 
+  // -------- STATE VARIABLES ---------
   const [betId, setBetId] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -33,14 +35,23 @@ export const CloseBetDialog = () => {
   // Anchor program instance for the Coin Toss program
   const program = getCoinTossProgram(provider);
 
-  const transactionToast = useTransactionToast();
-
+  /**
+   * Handles the closing of a bet account on-chain.
+   *
+   * This function interacts with the blockchain to close a specific bet account
+   * associated with the provided bet ID and user's public address. It manages
+   * loading states, error handling, and displays transaction feedback.
+   */
   const handleCloseBet = async () => {
     setLoading(true);
 
     try {
       const userAddressPubkey = new PublicKey(userAddress);
 
+      /**
+       * Send the request to the blockchain to close the bet account.
+       * The bet account is derived using the bet ID and the user's public key.
+       */
       const signature = await program.methods
         .closeBetAccount(betId, userAddressPubkey)
         .rpc();
@@ -48,6 +59,8 @@ export const CloseBetDialog = () => {
       if (!signature) throw new Error("Failed to close Bet Account!");
 
       transactionToast(signature);
+
+      // Close the dialog after successfully closing the bet account.
       setDialogOpen(false);
     } catch (error) {
       toast.error("Unable to close bet account!");

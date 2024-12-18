@@ -8,11 +8,22 @@ import { useEffect, useState } from "react";
 const CountDown = () => {
   const { eventData, eventError, isEventFetching } = useEventData();
 
+  // -------- STATE VARIABLES ---------
   const [timeLeft, setTimeLeft] = useState<CountDownTime>({
     minutes: "00",
     seconds: "00",
   });
 
+  /**
+   * A React `useEffect` hook to start a countdown timer based on the target event date-time.
+   *
+   * This effect initializes an interval timer that updates the remaining time until the target event occurs.
+   * The timer recalculates the time left every second and updates the state accordingly.
+   *
+   * The interval is cleared when the component unmounts or when `eventData` changes.
+   *
+   * @param eventData - The event data containing the `date_time` property (ISO string).
+   */
   useEffect(() => {
     if (eventData) {
       const targetTime = new Date(eventData.date_time);
@@ -23,6 +34,8 @@ const CountDown = () => {
         setTimeLeft(remainingTime);
       }, 1000);
 
+      // Cleanup function to clear the interval when the component unmounts
+      // or when the dependency array changes.
       return () => clearInterval(interval);
     }
   }, [eventData]);

@@ -22,7 +22,9 @@ import toast from "react-hot-toast";
 export const PayoutBetDialog = () => {
   const wallet = useWallet();
   const provider = useAnchorProvider();
+  const transactionToast = useTransactionToast();
 
+  // -------- STATE VARIABLES ---------
   const [betId, setBetId] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -31,8 +33,18 @@ export const PayoutBetDialog = () => {
   // Anchor program instance for the Coin Toss program
   const program = getCoinTossProgram(provider);
 
-  const transactionToast = useTransactionToast();
-
+  /**
+   * Handles the payout of a bet by interacting with the Solana program.
+   *
+   * This function processes the payout by sending tokens to the user's associated token account.
+   * It displays a toast notification with the transaction signature upon success or an error toast upon failure.
+   *
+   * The function assumes the existence of environment variables and program configuration necessary
+   * to interact with the Solana blockchain.
+   *
+   * @async
+   * @throws Will throw an error if the payout fails or no transaction signature is returned.
+   */
   const handlePayoutBet = async () => {
     setLoading(true);
 
@@ -40,11 +52,13 @@ export const PayoutBetDialog = () => {
       const mint = new PublicKey(process.env.NEXT_PUBLIC_TOSS_COIN!);
       const userAddressPubkey = new PublicKey(userAddress);
 
+      // Derive the associated token account for the user.
       const receiverTokenAccount = getAssociatedTokenAddressSync(
         mint,
         userAddressPubkey
       );
 
+      // Call the Solana program's `processBetPayout` method
       const signature = await program.methods
         .processBetPayout(betId, userAddressPubkey)
         .accounts({
@@ -57,6 +71,8 @@ export const PayoutBetDialog = () => {
         throw new Error(`Failed to payout bet with id: ${betId}!`);
 
       transactionToast(signature);
+
+      // Close the dialog after a successful payout.
       setDialogOpen(false);
     } catch (error) {
       toast.error("Unable to perform bet payout!");

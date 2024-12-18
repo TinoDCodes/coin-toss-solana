@@ -5,6 +5,22 @@ import Header from "@/components/ui/custom/Header";
 import { ReactNode, useEffect, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
+/**
+ * Layout component for the application.
+ *
+ * This layout wraps the app content with a header, footer, and a toast notification container.
+ * It provides consistent styling and structure across the app.
+ *
+ * @param {Object} props - The component props.
+ * @param {ReactNode} props.children - The child components to be rendered within the layout.
+ *
+ * @returns {JSX.Element} The application layout component.
+ *
+ * @example
+ * <AppLayout>
+ *   <HomePage />
+ * </AppLayout>
+ */
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="h-full flex flex-col bg-background">
@@ -122,7 +138,22 @@ export function AppHero({
   );
 }
 
+/**
+ * Custom hook to display a toast notification when a transaction is sent.
+ *
+ * @returns {(signature: string) => void} A function that triggers the toast notification
+ *                                       with a transaction explorer link.
+ *
+ * @example
+ * const showTransactionToast = useTransactionToast();
+ * showTransactionToast("5fG3H2...TxSignature");
+ */
 export function useTransactionToast() {
+  /**
+   * Displays a success toast notification for the transaction.
+   *
+   * @param {string} signature - The transaction signature to generate an explorer link.
+   */
   return (signature: string) => {
     toast.success(
       <div className={"text-center"}>
