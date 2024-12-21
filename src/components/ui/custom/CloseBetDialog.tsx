@@ -62,6 +62,8 @@ export const CloseBetDialog = () => {
 
       // Close the dialog after successfully closing the bet account.
       setDialogOpen(false);
+      setBetId("");
+      setUserAddress("");
     } catch (error) {
       toast.error("Unable to close bet account!");
       console.error(error);

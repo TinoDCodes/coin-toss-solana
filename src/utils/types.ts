@@ -108,4 +108,6 @@ export type Bet = {
   status: BetStatus;
   /** Optional timestamp indicating when the bet was created (usually set by the database). */
   created_at?: string;
+  /** Optional timestamp indicating when the bet was settled. */
+  settled_at?: string;
 };

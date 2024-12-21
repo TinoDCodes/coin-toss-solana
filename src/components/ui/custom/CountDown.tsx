@@ -5,6 +5,8 @@ import { getTimeLeft } from "@/utils/helpers";
 import { CountDownTime } from "@/utils/types";
 import { useEffect, useState } from "react";
 
+const ZERO_TIME = "00";
+
 const CountDown = () => {
   const { eventData, eventError, isEventFetching } = useEventData();
 
@@ -39,6 +41,14 @@ const CountDown = () => {
       return () => clearInterval(interval);
     }
   }, [eventData]);
+
+  if (timeLeft.minutes === ZERO_TIME && timeLeft.seconds === ZERO_TIME) {
+    return (
+      <h2 className="font-medium text-center text-muted-foreground animate-pulse">
+        awaiting next event...
+      </h2>
+    );
+  }
 
   return (
     <div>
