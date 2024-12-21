@@ -28,7 +28,7 @@ export function useCoinTossProgram() {
   const wallet = useWallet();
   const provider = useAnchorProvider();
 
-  // Anchor program instance for the Coin Toss program
+  // Get the Coin Toss program instance using the provider
   const program = getCoinTossProgram(provider);
 
   // User's associated coin account and transaction toast handler
@@ -38,6 +38,10 @@ export function useCoinTossProgram() {
   // Public key for the Coin Toss token mint, fetched from environment variables
   const mint = new PublicKey(process.env.NEXT_PUBLIC_TOSS_COIN!);
 
+  // ============================
+  // QUERY: Fetch Program Account Data
+  // ============================
+
   /**
    * Query to fetch the program's account information.
    * Useful for checking the program's on-chain state.
@@ -46,6 +50,10 @@ export function useCoinTossProgram() {
     queryKey: ["get-coin-toss-program-account", { cluster }],
     queryFn: () => connection.getParsedAccountInfo(programId),
   });
+
+  // ============================
+  // QUERY: Fetch Coin Vault Data
+  // ============================
 
   /**
    * Query to fetch the Coin Vault's token account information.
@@ -77,6 +85,10 @@ export function useCoinTossProgram() {
     refetchInterval: 30 * 1000,
   });
 
+  // ==============================
+  // MUTATION: Initialize Program
+  // ==============================
+
   /**
    * Mutation to initialize the Coin Toss program.
    * This sets up the program's required state and accounts.
@@ -96,6 +108,10 @@ export function useCoinTossProgram() {
     onError: () =>
       toast.error("Failed to run Initialize instruction on Coin Toss program"),
   });
+
+  // ==============================
+  // MUTATION: Deposit Tokens
+  // ==============================
 
   /**
    * Mutation to deposit tokens into the Coin Vault.
@@ -119,6 +135,10 @@ export function useCoinTossProgram() {
     onError: () => toast.error("Failed to deposit tokens into vault!"),
   });
 
+  // ==============================
+  // MUTATION: Airdrop Tokens
+  // ==============================
+
   /**
    * Mutation to airdrop tokens from the Coin Vault to the user.
    * Typically used for testing.
@@ -139,6 +159,18 @@ export function useCoinTossProgram() {
     onError: () => toast.error("Failed to transfer tokens out of vault!"),
   });
 
+  // ==============================
+  // MUTATION: Place Bet
+  // ==============================
+
+  /**
+   * Mutation to place a bet in the Coin Toss program.
+   * Users can place a bet by specifying a bet ID, stake amount, and odds.
+   *
+   * @param betId - Unique identifier for the bet.
+   * @param stake - Number of tokens to stake.
+   * @param odds - The odds for the bet.
+   */
   const placeBet = useMutation({
     mutationKey: ["coin-toss", "place-bet", wallet.publicKey],
     mutationFn: ({
@@ -163,7 +195,7 @@ export function useCoinTossProgram() {
     onError: () => toast.error("Failed to place bet!"),
   });
 
-  // Return all queries, mutations, and relevant program data
+  // Return all queries, mutations, and relevant program data for use in the component
   return {
     getProgramAccount,
     initialize,

@@ -46,6 +46,7 @@ const BetSectionUI = () => {
     isTailsMarketPending,
   } = useEventData();
 
+  // -------- STATE VARIABLES ---------
   const [selectedFace, setSelectedFace] = useState<CoinFace>(faces[0]);
   const [betAmount, setBetAmount] = useState<string>("1");
   const [odds, setOdds] = useState<number>(0);
@@ -55,12 +56,16 @@ const BetSectionUI = () => {
     // Calculate potential earnings whenever bet amount changes
     const amount = parseFloat(betAmount) || 0;
 
-    // Round potential earnings to 3 decimal places using Number()
+    // Round potential earnings to 3 decimal places.
     const earnings = Number((amount * odds).toFixed(3));
 
     setPotentialEarnings(earnings);
   }, [betAmount, odds]);
 
+  /**
+   * Updates the odds based on the selected face ("heads" or "tails") and the market prices.
+   * If headsMarket and tailsMarket are available, the odds are calculated as the inverse of the selected market price.
+   */
   useEffect(() => {
     if (headsMarket && tailsMarket) {
       if (selectedFace.value === "heads") {
@@ -73,6 +78,12 @@ const BetSectionUI = () => {
     }
   }, [selectedFace, headsMarket, tailsMarket]);
 
+  /**
+   * Handles changes in the bet amount input field.
+   * Ensures the bet amount is a valid positive number or resets to an empty string if invalid.
+   *
+   * @param e - React change event for the input field
+   */
   const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "" || value === "0") {
@@ -85,10 +96,18 @@ const BetSectionUI = () => {
     }
   };
 
+  /**
+   * Handles placing a bet by performing the following steps:
+   * - Generates a unique bet ID.
+   * - Calculates the stake and odds using predefined decimals.
+   * - Determines the selection ID based on the selected face.
+   * - Sends the bet data to the mutation handler.
+   * - Submits the bet to the backend and resets the UI state upon success.
+   */
   const handlePlaceBet = async () => {
     const betId: string = newBetId();
-    const stake = Number(betAmount) * Math.pow(10, TOKEN_DECIMALS);
-    const betOdds = odds * Math.pow(10, ODDS_DECIMALS);
+    const stake = Number(betAmount) * Math.pow(10, TOKEN_DECIMALS); // Convert bet amount to smallest unit
+    const betOdds = odds * Math.pow(10, ODDS_DECIMALS); // Convert odds to fixed-point representation
     const selectionId =
       selectedFace.value === "heads"
         ? headsMarket!.selection_id
@@ -97,18 +116,20 @@ const BetSectionUI = () => {
     const res = await placeBet.mutateAsync({ betId, stake, odds: betOdds });
 
     if (res) {
+      // Prepare bet data for submission
       const betData: Bet = {
         bet_id: betId,
-        event_id: eventData!.id,
-        selection_id: selectionId,
-        stake: stake,
-        odds: odds,
-        wallet_address: wallet.publicKey!.toString(),
-        status: "open",
+        event_id: eventData!.id, // Event ID for the bet
+        selection_id: selectionId, // Selection ID based on chosen face
+        stake: stake, // Bet amount in smallest unit
+        odds: odds, // Odds in decimal format
+        wallet_address: wallet.publicKey!.toString(), // User's wallet address
+        status: "open", // Initial status of the bet
       };
 
       await submitBet(betData);
 
+      // Reset UI state
       setSelectedFace(faces[0]);
       setBetAmount("1");
     }
