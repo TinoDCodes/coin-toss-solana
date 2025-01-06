@@ -9,7 +9,8 @@ import { NoTokenAccountDialog } from "./NoTokenAccountDialog";
 
 export const CoinBalance = () => {
   const wallet = useWallet();
-  const { userCoinAccount, coinAccountError } = useUserCoinAccount();
+  const { userCoinAccount, coinAccountError, isCoinAccountPending } =
+    useUserCoinAccount();
 
   /**
    * Retrieves and formats the user's token balance for display.
@@ -36,7 +37,7 @@ export const CoinBalance = () => {
    *
    * Triggers a dialog prompting the user to sign the transaction that will create an account for them.
    */
-  if (wallet.publicKey && !userCoinAccount) {
+  if (wallet.publicKey && !isCoinAccountPending && !userCoinAccount) {
     return <NoTokenAccountDialog />;
   }
 
