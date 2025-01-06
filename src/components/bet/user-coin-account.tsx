@@ -37,7 +37,7 @@ export function useUserCoinAccount() {
 
         // If no token accounts exist.
         if (!fetchTokenAccounts || fetchTokenAccounts.value.length === 0) {
-          return NO_TOKEN_ACCOUNT_FOUND;
+          return null;
         }
 
         // If accounts exist, return the first one.

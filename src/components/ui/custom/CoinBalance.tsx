@@ -20,10 +20,9 @@ export const CoinBalance = () => {
    *
    * @returns {string | null} The formatted balance as a string, or null if the wallet is disconnected or an error occurs.
    */
-  const displayedBalance =
-    userCoinAccount && isCoinAccount(userCoinAccount)
-      ? userCoinAccount.account.data.parsed.info.tokenAmount.uiAmount.toFixed(2)
-      : "";
+  const displayedBalance = userCoinAccount
+    ? userCoinAccount.account.data.parsed.info.tokenAmount.uiAmount.toFixed(2)
+    : "";
 
   /**
    * Handles cases where the wallet is not connected.
@@ -37,9 +36,7 @@ export const CoinBalance = () => {
    *
    * Triggers a dialog prompting the user to sign the transaction that will create an account for them.
    */
-  if (userCoinAccount === NO_TOKEN_ACCOUNT_FOUND) {
-    console.log(userCoinAccount);
-
+  if (wallet.publicKey && !userCoinAccount) {
     return <NoTokenAccountDialog />;
   }
 
@@ -62,17 +59,3 @@ export const CoinBalance = () => {
     </div>
   );
 };
-
-/**
- * Type guard to check if the given value is a coin account object.
- *
- * @param account - The value to check. It can be a string or a coin account object.
- * @returns `true` if the value is a coin account object; otherwise, `false`.
- */
-function isCoinAccount(
-  account:
-    | string
-    | { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }
-): account is { pubkey: PublicKey; account: AccountInfo<ParsedAccountData> } {
-  return typeof account !== "string";
-}
