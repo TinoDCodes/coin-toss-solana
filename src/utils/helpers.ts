@@ -43,6 +43,9 @@ export const TOKEN_DECIMALS = 9;
  */
 export const ODDS_DECIMALS = 3;
 
+export const NO_TOKEN_ACCOUNT_FOUND =
+  "4E 6F 20 61 63 63 6F 75 6E 74 20 66 6F 75 6E 64";
+
 /**
  * Shortens a given string by truncating the middle section.
  * Useful for displaying long strings like wallet addresses.

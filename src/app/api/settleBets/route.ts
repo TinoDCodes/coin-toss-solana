@@ -1,6 +1,16 @@
 import { createServiceRoleClient } from "@/utils/supabase/admin";
 import { Bet } from "@/utils/types";
 
+/**
+ * Handles the GET request to process and settle open bets.
+ * - Secures the route with an API key.
+ * - Retrieves open bets from the database.
+ * - Fetches associated events and selections data.
+ * - Updates bet statuses based on event results.
+ *
+ * @param {Request} request - The incoming HTTP request.
+ * @returns {Promise<Response>} The HTTP response with the success or failure details.
+ */
 export async function GET(request: Request) {
   /*--------- SECURE THE API ROUTE ----------*/
   const authHeader = request.headers.get("authorization");

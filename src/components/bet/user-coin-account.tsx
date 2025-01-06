@@ -4,11 +4,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
-import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
-import { mplTokenMetadata } from "@metaplex-foundation/mpl-token-metadata";
-import { createAssociatedToken } from "@metaplex-foundation/mpl-toolbox";
-import { publicKey } from "@metaplex-foundation/umi";
+import { NO_TOKEN_ACCOUNT_FOUND } from "@/utils/helpers";
 
 /**
  * Custom hook to manage the user's token account for the Toss Coin Mint.
@@ -25,6 +21,7 @@ export function useUserCoinAccount() {
     data: userCoinAccount,
     error: coinAccountError,
     isPending: isCoinAccountPending,
+    refetch: refetchUserCoinAccount,
   } = useQuery({
     queryKey: ["coin-data", wallet.publicKey],
     queryFn: async () => {
@@ -38,26 +35,9 @@ export function useUserCoinAccount() {
             programId: TOKEN_PROGRAM_ID,
           });
 
-        // If no token accounts exist, create an associated token account.
+        // If no token accounts exist.
         if (!fetchTokenAccounts || fetchTokenAccounts.value.length === 0) {
-          const umi = createUmi("https://api.devnet.solana.com");
-          umi.use(walletAdapterIdentity(wallet)).use(mplTokenMetadata());
-
-          // Create the associated token account.
-          await createAssociatedToken(umi, {
-            mint: publicKey(process.env.NEXT_PUBLIC_TOSS_COIN!),
-            owner: umi.identity.publicKey,
-          }).sendAndConfirm(umi);
-
-          // Refetch the newly created token account.
-          const newTokenAccount = await connection
-            .getParsedTokenAccountsByOwner(wallet.publicKey!, {
-              mint: mint,
-              programId: TOKEN_PROGRAM_ID,
-            })
-            .then((res) => res.value[0]); // Return the first (and only) account.
-
-          return newTokenAccount; // Return the newly created account.
+          return NO_TOKEN_ACCOUNT_FOUND;
         }
 
         // If accounts exist, return the first one.
@@ -75,5 +55,10 @@ export function useUserCoinAccount() {
     enabled: !!wallet.publicKey, // Enable only if the wallet is connected.
   });
 
-  return { userCoinAccount, coinAccountError, isCoinAccountPending };
+  return {
+    userCoinAccount,
+    coinAccountError,
+    isCoinAccountPending,
+    refetchUserCoinAccount,
+  };
 }
