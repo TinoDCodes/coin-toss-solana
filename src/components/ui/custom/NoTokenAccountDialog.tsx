@@ -80,10 +80,10 @@ export const NoTokenAccountDialog = () => {
         <DialogHeader>
           <DialogTitle>No Token Account Found❗</DialogTitle>
           <DialogDescription>
-            It seems you don't have a token account for this token yet. To
-            participate in betting events, you'll need to create one to hold
-            your tokens. Click 'Create Account' to set it up, or disconnect if
-            you wish to cancel.
+            It seems you don&apos;t have a token account for this token yet. To
+            participate in betting events, you&apos;ll need to create one to
+            hold your tokens. Click &apos;Create Account&apos; to set it up, or
+            disconnect if you wish to cancel.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
