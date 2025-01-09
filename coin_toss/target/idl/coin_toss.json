@@ -53,7 +53,7 @@
           "name": "signer",
           "writable": true,
           "signer": true,
-          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
+          "address": "R4rC4Et7dHZ8ssuN6Ta1LAZd78hZvfCWfjiQq78DTqy"
         },
         {
           "name": "system_program",
@@ -154,7 +154,8 @@
         {
           "name": "signer",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
         },
         {
           "name": "system_program",
@@ -434,7 +435,7 @@
           "name": "signer",
           "writable": true,
           "signer": true,
-          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
+          "address": "R4rC4Et7dHZ8ssuN6Ta1LAZd78hZvfCWfjiQq78DTqy"
         },
         {
           "name": "system_program",

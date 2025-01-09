@@ -59,7 +59,7 @@ export type CoinToss = {
           "name": "signer",
           "writable": true,
           "signer": true,
-          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
+          "address": "R4rC4Et7dHZ8ssuN6Ta1LAZd78hZvfCWfjiQq78DTqy"
         },
         {
           "name": "systemProgram",
@@ -160,7 +160,8 @@ export type CoinToss = {
         {
           "name": "signer",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
         },
         {
           "name": "systemProgram",
@@ -440,7 +441,7 @@ export type CoinToss = {
           "name": "signer",
           "writable": true,
           "signer": true,
-          "address": "EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7"
+          "address": "R4rC4Et7dHZ8ssuN6Ta1LAZd78hZvfCWfjiQq78DTqy"
         },
         {
           "name": "systemProgram",

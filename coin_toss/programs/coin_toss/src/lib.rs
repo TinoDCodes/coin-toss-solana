@@ -5,6 +5,7 @@ declare_id!("AotF3uCcqR7LymaLUproQ3PwmqFqoK7zwg1t7FfU4rb8");
 
 /*---------- global variables ---------*/
 const ADMIN_PUBKEY: Pubkey = pubkey!("EuY4WgtvivwYf1MKYQU7j5VejM7cqJZ27t3YSYBjJqq7");
+const PAYOUT_AUTHORITY: Pubkey = pubkey!("R4rC4Et7dHZ8ssuN6Ta1LAZd78hZvfCWfjiQq78DTqy");
 const MAX_BET_ID_LENGTH: usize = 25;
 
 #[program]
@@ -149,7 +150,10 @@ pub struct Initialize<'info> {
 
     coin_toss_token_mint: Account<'info, Mint>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        address = ADMIN_PUBKEY @ CustomError::UnauthorizedUserAction
+    )]
     signer: Signer<'info>,
     system_program: Program<'info, System>,
     token_program: Program<'info, Token>,
@@ -262,7 +266,7 @@ pub struct BetPayout<'info> {
     
     #[account(
         mut,
-        address = ADMIN_PUBKEY @ CustomError::UnauthorizedUserAction
+        address = PAYOUT_AUTHORITY @ CustomError::UnauthorizedUserAction
     )]
     signer: Signer<'info>,
     system_program: Program<'info, System>,
@@ -283,7 +287,7 @@ pub struct CloseBetAccount<'info> {
 
     #[account(
         mut,
-        address = ADMIN_PUBKEY @ CustomError::UnauthorizedUserAction
+        address = PAYOUT_AUTHORITY @ CustomError::UnauthorizedUserAction
     )]
     pub signer: Signer<'info>,
     pub system_program: Program<'info, System>
