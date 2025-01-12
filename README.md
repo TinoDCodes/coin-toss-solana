@@ -45,8 +45,8 @@ Coin Toss Solana is a betting application that allows users to wager on coin tos
 
 ## Tech Stack
 
-- **Blockchain**: Solana
-- **Backend**: Supabase
+- **Blockchain**: Solana and Anchor
+- **Backend**: Supabase and Node
 - **Frontend**: React, Next.js and Shadcn UI
 - **Programming Languages**: TypeScript, Javascript, Tailwind CSS and Rust
 - **Libraries/Tools**:
@@ -70,8 +70,8 @@ Coin Toss Solana is a betting application that allows users to wager on coin tos
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/solana-bets-dapp.git
-   cd solana-bets-dapp
+   git clone https://github.com/TinoDCodes/coin-toss-solana.git
+   cd coin-toss-solana
    ```
 
 2. Install dependencies:
@@ -93,12 +93,13 @@ Coin Toss Solana is a betting application that allows users to wager on coin tos
    
 ## Environment Variables
 
-Create a `.env` file in the project root with the following variables:
+Create a `.env.local` file in the project root with the following variables:
 
 ```env
 API_KEY=your_api_key
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_SECRET=your_service_role_key
 WALLET_PRIVATE_KEY=your_wallet_private_key
 NEXT_PUBLIC_TOSS_COIN=your_spl_token_mint_address
 ```
@@ -116,17 +117,17 @@ NEXT_PUBLIC_TOSS_COIN=your_spl_token_mint_address
 
 ### APIs
 
-- **Settling Bets API**: Automates bet settlement and winnings distribution.
-- **Coin Toss API**: Automates coin toss events and new event creation.
+- **Settling Bets API** (/api/settleBets): Automates bet settlement and winnings distribution.
+- **Coin Toss API** (/api/event): Automates coin toss events and new event creation.
 
 #### Example Usage of Settling Bets API
 ```bash
-curl -X GET -H "Authorization: Bearer your_api_key" http://localhost:3000/api/settle-bets
+curl -X GET -H "Authorization: Bearer your_api_key" http://localhost:3000/api/settleBets
 ```
 
 ## API Details
 
-### GET /api/settle-bets
+### GET /api/settleBets
 
 Processes open bets by:
 - Checking event results.
@@ -149,15 +150,17 @@ Processes open bets by:
     {
       "id": 1,
       "status": "won",
-      "settled_at": "2025-01-09T12:00:00Z"
+      "settled_at": "2025-01-09T12:00:00Z",
+      ...
     }
   ]
 }
 ```
 
-### GET /api/coin-toss
+### GET /api/event
 
 Automates coin toss events and creates new events in Supabase.
+This API is intended to be used via a vercel cron job that runs every hour.
 
 #### Responses
 - `200`: Success
@@ -165,13 +168,57 @@ Automates coin toss events and creates new events in Supabase.
 
 ## Coin Toss Solana Program
 
-This is a Solana program written in Rust using the Anchor framework and includes the following instruction handlers:
+This Solana program, written in Rust using the Anchor framework, provides a secure and efficient way to handle token-based betting events. The program supports the following core functionalities:
 
-1. **Place Bet**: Allows users to place a bet on an event.
-2. **Settle Bet**: Handles payouts and updates bet statuses.
-3. **Manage Vault**: Handles Toss Coin deposits, withdrawals, and vault balance management.
+### Key Features
 
-The program ensures all on-chain operations are secure and efficient.
+1. **Place Bet**
+Users can place bets by staking tokens. Each bet is tied to a unique `bet_id` and includes details such as stake amount and odds. User stakes are securely transferred into an on-chain coin vault.
+
+2. **Settle Bet**
+After a betting event concludes, this feature calculates payouts based on the odds and distributes tokens from the coin vault to the winner's account. It also ensures the validity of the payout process.
+
+3. **Vault Management**
+The program includes functionality to handle deposits and withdrawals from the coin vault, ensuring proper tracking of vault balances.
+
+### Program Highlights
+
+ - **Global Constants**
+   - `ADMIN_PUBKEY`: Authorizes administrative actions.
+   - `PAYOUT_AUTHORITY`: Ensures payouts are securely authorized.
+   - `MAX_BET_ID_LENGTH`: Restricts bet ID length for consistency and security.
+
+- **Instruction Handlers**
+   - **Initialization**: Sets up necessary accounts, including a token vault and PDA (Program Derived Address).
+   - **Token Transfers**: Handles deposits and withdrawals securely using CPI (Cross-Program Invocation).
+   - **Bet Management**: Enables users to place bets, processes payouts, and manages bet accounts.
+
+- **Error Handling**
+   Built-in validation, such as ensuring bet IDs do not exceed the allowed length and protecting vault operations with authorized access only.
+
+### Technical Details
+
+The program uses Anchor's account structures to manage user and vault data, ensuring all operations adhere to Solana's security best practices. Below are some key elements implemented in the code:
+
+- **Token Vaults**: A PDA-owned token account securely holds user stakes until a payout or withdrawal is processed.
+- **Bet Payout Calculation**: Odds are scaled for precision (e.g., scaled by `10^3`), and payouts are derived as `stake × odds / 1000`.
+- **Efficient Resource Usage**: Uses `CpiContext` for token transfers, ensuring smooth integration with the SPL Token program.
+
+### Example Use Cases
+
+1. **User Places a Bet**
+   - Stake tokens via the `place_bet` instruction.
+   - Tokens are securely transferred to the vault, and a user bet account is initialized.
+
+2. **Settle a Bet**
+   - The `process_bet_payout` instruction calculates the payout and transfers tokens from the vault to the winner.
+
+3. **Vault Operations**
+   - Admin can deposit or withdraw tokens from the coin vault using `transfer_in` and `transfer_out` instructions.
+
+Explore the [code implementation](./coin_toss/programs/coin_toss/src/lib.rs) for detailed logic and context.
+
+---
 
 ### Anchor Commands
 
